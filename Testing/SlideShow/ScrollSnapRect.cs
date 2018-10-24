@@ -147,7 +147,7 @@ public class ScrollSnapRect : MonoBehaviour, IBeginDragHandler, IEndDragHandler,
         _container.anchoredPosition = newPosition;
 
         // delete any previous settings
-        _pagePositions.Clear();
+        _pagePositions.Clear(); 
 
         // iterate through all container childern and set their positions
         for (int i = 0; i < _pageCount; i++) {
