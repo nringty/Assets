@@ -13,6 +13,9 @@ public class GraphInstantiator : MonoBehaviour
     private Vector3 cubeLoc = new Vector3(0f, 0.5f, 0f);
     private Vector3 textLoc = new Vector3(-.08024438f, -.07971092f, .74f);
     private Vector3 xtextLoc = new Vector3(-.08784437f, -.08010092f, .74f);
+    public string GraphTitle;
+    public string XAxisTitle;
+    public string YAxisTitle;
 
     public float initGrowSpeed = 5f;
 
@@ -23,7 +26,7 @@ public class GraphInstantiator : MonoBehaviour
     public float allowError = 0.001f;
 
     private float[] values = { 10, 5, 4, 9, 12, 2, 7 };
-    private string[] textLabel = { "text 1", "text 2", "text 3", "text 4", "text 5", "text 6", "text 7" };
+    private string[] textLabel = { "Red", "Yellow", "BLue", "Cyan", "Green", "Gray", "Magenta" };
 
 
     float[] initGrowSpeeds;// = { 10, 20, 40 };
@@ -129,6 +132,12 @@ public class GraphInstantiator : MonoBehaviour
             //newBar.GetComponent<Renderer>().material.color = ObjectColor[i];
             //newBar.gameObject.GetComponentInChildren
         }
+        GameObject BarGraphTitle = GameObject.Find("BarGraphTitle");
+        GameObject BarGraphXTitle = GameObject.Find("BarGraphTitle");
+        GameObject BarGraphYTitle = GameObject.Find("BarGraphTitle");
+        BarGraphTitle.GetComponent<TextMesh>().text = GraphTitle;
+        BarGraphXTitle.GetComponent<TextMesh>().text = XAxisTitle;
+        BarGraphYTitle.GetComponent<TextMesh>().text = YAxisTitle;
         //GameObject MetaCanvas1 = GameObject.Find("MetaCanvasBarChart");
         //MetaCanvas1.transform.localScale = new Vector3(containerScaleVal, containerScaleVal, containerScaleVal);
     }
