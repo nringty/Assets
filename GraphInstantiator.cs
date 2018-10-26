@@ -4,15 +4,17 @@ using System.Collections;
 
 public class GraphInstantiator : MonoBehaviour
 {
-
+    //Declare Game Objects to be set by user
     public GameObject Cube;
     public GameObject Text;
     public GameObject xText;
+
+    //Declare and Set Scale Value - This is set so that the objects dont appear to large
     public float scaleVal= .01f;
     public float containerScaleVal = .01f;
     private Vector3 cubeLoc = new Vector3(0f, 0.5f, 0f);
-    private Vector3 textLoc = new Vector3(-.08024438f, -.07971092f, .74f);
-    private Vector3 xtextLoc = new Vector3(-.08784437f, -.08010092f, .74f);
+    private Vector3 textLoc = new Vector3(-.08024438f, -.07971092f, 0f); //.74f
+    private Vector3 xtextLoc = new Vector3(-.08784437f, -.076f, 0f); //.74f
     public string GraphTitle;
     public string XAxisTitle;
     public string YAxisTitle;
@@ -25,15 +27,17 @@ public class GraphInstantiator : MonoBehaviour
     public float growDecellerationPoint = 0.4f;
     public float allowError = 0.001f;
 
-    private float[] values = { 10, 5, 4, 9, 12, 2, 7 };
-    private string[] textLabel = { "Red", "Yellow", "BLue", "Cyan", "Green", "Gray", "Magenta" };
-
+    private float[] values = { 1000, 500, 400, 900, 1200, 200, 700 }; //X-Axis
+    float[] NewValues;
+    private string[] textLabel = { "Red", "Yellow", "BLue", "Cyan", "Green", "Gray", "Magenta" }; //Y-Axis Labels
+    private float MaxValue;
 
     float[] initGrowSpeeds;// = { 10, 20, 40 };
 
-
+    //Set BarGraph Colors
     private Color[] ObjectColor = { Color.red,  Color.yellow, Color.blue, Color.cyan, Color.green, Color.gray, Color.magenta, Color.grey };
 
+    //Set Material
     public Material transparentMat;
     //private Color currentColor;
     //private Material materialColored;
@@ -41,26 +45,50 @@ public class GraphInstantiator : MonoBehaviour
 
     void Start()
     {
-        DisplayGraph(values);
-        initGrowSpeeds = values;
+        //Set New Values
+        float[] NewValues = SetNewValues();
+
+        //Display and Construct Graph
+        DisplayGraph(NewValues);
+
+        initGrowSpeeds = NewValues;
+    }
+
+    // Function to set Scale to value so that Values dont make cube too High or too Short (New Vaules to be set beetbeen 1 and 10)
+    public float[] SetNewValues()
+    {
+        MaxValue = Mathf.Max(values);
+        NewValues = new float[values.Length];
+        for (int i = 0; i < values.Length; i++)
+        {         
+            NewValues[i] = (values[i] / MaxValue)*10;
+        }
+        return NewValues;
     }
 
     void Update()
     {
-        for (int i = 0; i < values.Length; i++)
+        float CurPerCentage = 0;
+        float percen;
+        for (int i = 0; i < NewValues.Length; i++)
         {
+            // Create Additional Cube Objects and X,Y Axis Labels
             string cubeName = "Cube" + i.ToString();
             string textName = "Text" + i.ToString();
             string xtextName = "xText" + i.ToString();
+
             //string xTextVal = (i + 1).ToString();
+
+            // Find Declared Game Object Cube and Text Labels
             GameObject GO = GameObject.Find(cubeName);
             GameObject GOText = GameObject.Find(textName);
             GameObject GOxText = GameObject.Find(xtextName);
             GameObject GOCubeContainer = GameObject.Find("Cube");
-            float newValue = values[i] * scaleVal;
+            float newValue = NewValues[i] * scaleVal;
             float newInitGrowSpeeds = initGrowSpeeds[i] * scaleVal;
+            
 
-            if (GO.transform.localScale.y <= (newValue - allowError))
+            if (GO.transform.localScale.y <= (NewValues[i] - allowError))
             {
                 float cubeHeight = GO.transform.localScale.y;
                 float growSpeed = newInitGrowSpeeds;
@@ -93,21 +121,27 @@ public class GraphInstantiator : MonoBehaviour
                 //GO.renderer.material.color = Color.red;
             }
             GOText.GetComponent<TextMesh>().text = textLabel[i];
-            GOxText.GetComponent<TextMesh>().text = (i * 2).ToString() + "-";
+            //GOxText.GetComponent<TextMesh>().text = (i * 2).ToString() + "-";
+
+            string yValue = (Mathf.Max(values) * CurPerCentage / 100).ToString() + "-";
+            CurPerCentage += 20;
+            GOxText.GetComponent<TextMesh>().text = yValue;//(i * 2).ToString() + "-";
             GO.GetComponent<Renderer>().material.color = ObjectColor[i];
         }
     }
 
-    void DisplayGraph(float[] values)
+    void DisplayGraph(float[] NewValues)
     {
         GameObject GOstart = GameObject.Find("Cube0");
         cubeLoc = new Vector3(GOstart.transform.position.x, GOstart.transform.position.y, GOstart.transform.position.z);
+        GameObject GOxtext = GameObject.Find("xText0");
         Vector3 cubeLocInitPos = cubeLoc;
         Vector3 textLocInitPos = textLoc;
-        Vector3 xtextLocInitPos = xtextLoc;
+        Vector3 xtextLocInitPos = new Vector3(GOxtext.transform.position.x, GOxtext.transform.position.y, GOxtext.transform.position.z);
+        //Vector3 xtextLocInitPos = xtextLoc;
         GameObject MetaCanvas = GameObject.Find("BarGraphGameObject");
 
-        for (int i = 1; i < values.Length; i++)
+        for (int i = 1; i < NewValues.Length; i++)
         {
             cubeLoc = cubeLocInitPos + Vector3.right * (scaleVal *2) * i;
             textLoc = textLocInitPos + Vector3.right * (scaleVal * 2) * i;
@@ -132,9 +166,9 @@ public class GraphInstantiator : MonoBehaviour
             //newBar.GetComponent<Renderer>().material.color = ObjectColor[i];
             //newBar.gameObject.GetComponentInChildren
         }
-        GameObject BarGraphTitle = GameObject.Find("BarGraphTitle");
-        GameObject BarGraphXTitle = GameObject.Find("BarGraphTitle");
-        GameObject BarGraphYTitle = GameObject.Find("BarGraphTitle");
+        GameObject BarGraphTitle = GameObject.Find("Title");
+        GameObject BarGraphXTitle = GameObject.Find("Label X Axis");
+        GameObject BarGraphYTitle = GameObject.Find("Label Y Axis");
         BarGraphTitle.GetComponent<TextMesh>().text = GraphTitle;
         BarGraphXTitle.GetComponent<TextMesh>().text = XAxisTitle;
         BarGraphYTitle.GetComponent<TextMesh>().text = YAxisTitle;
