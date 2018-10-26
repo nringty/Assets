@@ -69,7 +69,6 @@ public class GraphInstantiator : MonoBehaviour
     void Update()
     {
         float CurPerCentage = 0;
-        float percen;
         for (int i = 0; i < NewValues.Length; i++)
         {
             // Create Additional Cube Objects and X,Y Axis Labels
@@ -82,7 +81,7 @@ public class GraphInstantiator : MonoBehaviour
             // Find Declared Game Object Cube and Text Labels
             GameObject GO = GameObject.Find(cubeName);
             GameObject GOText = GameObject.Find(textName);
-            GameObject GOxText = GameObject.Find(xtextName);
+
             GameObject GOCubeContainer = GameObject.Find("Cube");
             float newValue = NewValues[i] * scaleVal;
             float newInitGrowSpeeds = initGrowSpeeds[i] * scaleVal;
@@ -125,7 +124,12 @@ public class GraphInstantiator : MonoBehaviour
 
             string yValue = (Mathf.Max(values) * CurPerCentage / 100).ToString() + "-";
             CurPerCentage += 20;
-            GOxText.GetComponent<TextMesh>().text = yValue;//(i * 2).ToString() + "-";
+            if (i <= 5)
+            {
+                GameObject GOxText = GameObject.Find(xtextName);
+                GOxText.GetComponent<TextMesh>().text = yValue;//(i * 2).ToString() + "-";
+            }
+            
             GO.GetComponent<Renderer>().material.color = ObjectColor[i];
         }
     }
@@ -145,15 +149,15 @@ public class GraphInstantiator : MonoBehaviour
         {
             cubeLoc = cubeLocInitPos + Vector3.right * (scaleVal *2) * i;
             textLoc = textLocInitPos + Vector3.right * (scaleVal * 2) * i;
-            xtextLoc = xtextLocInitPos + Vector3.up * (scaleVal * 2) * i;
+            //xtextLoc = xtextLocInitPos + Vector3.up * (scaleVal * 2) * i;
             GameObject newBar = Instantiate(Cube, cubeLoc, Quaternion.identity) as GameObject;
             GameObject newText = Instantiate(Text, textLoc, Quaternion.identity) as GameObject;
-            GameObject newxText = Instantiate(xText, xtextLoc, Quaternion.identity) as GameObject;
+            //GameObject newxText = Instantiate(xText, xtextLoc, Quaternion.identity) as GameObject;
             //newText.transform.localScale = new Vector3(scaleVal, scaleVal, scaleVal);
 
             newBar.transform.SetParent(MetaCanvas.transform);
             newText.transform.SetParent(MetaCanvas.transform);
-            newxText.transform.SetParent(MetaCanvas.transform);
+            //newxText.transform.SetParent(MetaCanvas.transform);
 
             Transform tf = newBar.GetComponent<Transform>();
             Debug.Log(cubeLoc.ToString());
@@ -161,10 +165,17 @@ public class GraphInstantiator : MonoBehaviour
 
             newBar.name = "Cube" + i.ToString();
             newText.name = "Text" + i.ToString();
-            newxText.name = "xText" + i.ToString();
+            //newxText.name = "xText" + i.ToString();
             newBar.GetComponent<Renderer>().material = transparentMat;
             //newBar.GetComponent<Renderer>().material.color = ObjectColor[i];
             //newBar.gameObject.GetComponentInChildren
+        }
+        for (int i = 1; i <= 5; i++)
+        {
+            xtextLoc = xtextLocInitPos + Vector3.up * (scaleVal * 2) * i;
+            GameObject newxText = Instantiate(xText, xtextLoc, Quaternion.identity) as GameObject;
+            newxText.transform.SetParent(MetaCanvas.transform);
+            newxText.name = "xText" + i.ToString();
         }
         GameObject BarGraphTitle = GameObject.Find("Title");
         GameObject BarGraphXTitle = GameObject.Find("Label X Axis");
